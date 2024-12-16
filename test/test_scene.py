@@ -2,7 +2,7 @@ import pygame
 from pygame.surface import Surface
 
 from src.core.essentials import Anchor, MouseButtons, Scene
-from src.core.gui import BasicButton
+from src.core.gui import BasicButton, Textbox
 from src.game.singletons import GameSettings, Mixer, Mouse
 
 
@@ -28,6 +28,10 @@ class TestScene(Scene):
             {("pressed", 0): "click.mp3", ("selected_ini", 0): "select.ogg"},
             anchor=Anchor.CENTER,
         )
+        self.textbox = Textbox(
+            (200, 100),
+            text="Here we have a sample text. This is a very cool text and serves the purpose of testing the textbox dimensions.",
+        )
 
     def update(self, frames_passed: int):
         self.button.update(frames_passed)
@@ -38,6 +42,7 @@ class TestScene(Scene):
         self.button.get_sfc().render(screen)
         if audio := self.button.pop_audio():
             Mixer().play_sfx(audio)
+        screen.blit(self.textbox.get_sfc(), (0, 0))
 
     def on_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:

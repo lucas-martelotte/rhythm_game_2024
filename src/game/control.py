@@ -36,7 +36,7 @@ class Control:
         settings = GameSettings()
         self.active_scene.render(self.screen)
         scaled = self.screen
-        scaled = pygame.transform.scale(self.screen, settings.display_size())
+        scaled = pygame.transform.smoothscale(self.screen, settings.display_size())
         scaled_rect = scaled.get_rect(center=settings.display_center().to_tuple())
         self.display.blit(scaled, scaled_rect)
         pygame.display.update()
