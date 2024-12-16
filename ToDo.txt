@@ -1,0 +1,10 @@
+main menu
+settings menu (1440 x 1080, 1080 x 810, 800 x 600, 640 x 480)
+sound
+
+======================
+
+Resolution
+Timer, Control
+Button, BasicButton
+SceneManagement
