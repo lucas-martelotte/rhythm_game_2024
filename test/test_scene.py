@@ -3,7 +3,7 @@ from pygame.surface import Surface
 
 from src.core.essentials import Anchor, MouseButtons, Scene
 from src.core.gui import BasicButton
-from src.game.singletons import GameSettings, Mouse
+from src.game.singletons import GameSettings, Mixer, Mouse
 
 
 class TestScene(Scene):
@@ -25,7 +25,7 @@ class TestScene(Scene):
                 "pressed": [color_sfc((255, 100, 100)), color_sfc((100, 255, 100))]
                 * 10,
             },
-            {},
+            {("pressed", 0): "click.mp3", ("selected_ini", 0): "select.ogg"},
             anchor=Anchor.CENTER,
         )
 
@@ -36,6 +36,8 @@ class TestScene(Scene):
     def render(self, screen: Surface):
         screen.fill((255, 255, 255))
         self.button.get_sfc().render(screen)
+        if audio := self.button.pop_audio():
+            Mixer().play_sfx(audio)
 
     def on_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:

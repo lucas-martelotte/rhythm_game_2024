@@ -21,10 +21,10 @@ class Control:
 
     def main_loop(self):
         while True:
-            pygame.display.update()
-            self.active_scene.update(self.fps_tracker.get_frames_passed())
             self.clock.tick(GameSettings().fps)
             self.render()
+            pygame.display.update()
+            self.active_scene.update(self.fps_tracker.get_frames_passed())
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()

@@ -28,13 +28,13 @@ class Button(Sprite):
     def handle_mouse_hover(self, mouse_pos: Pos):
         hover = self.point_collision(mouse_pos)
         if not hover and self.is_looping():
+            self._just_pressed = False
             self.set_state("idle")
         if hover and self.state == "idle":
             if self._just_pressed:
                 self.set_state("selected")
             else:
                 self.set_state("selected_ini")
-            self._just_pressed = False
 
 
 class BasicButton(Button):

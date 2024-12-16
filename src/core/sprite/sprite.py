@@ -26,25 +26,32 @@ class Sprite:
         self._frame = 0
         self.pos = position
         self.state = initial_state
+        self._audio_to_play: str | None = None  # handle frame loss
 
     def update(self, frames_passed: int):
-        self._frame = self._frame + frames_passed
-        max_frames = self.get_curr_max_frames()
-        while self._frame >= max_frames:
-            self._frame -= max_frames
-            self.state = self._state_machine[self.state]
-            max_frames = self.get_curr_max_frames()
+        for _ in range(frames_passed):
+            self._frame += 1
+            while self._frame >= self.get_curr_max_frames():
+                self._frame -= self.get_curr_max_frames()
+                self.state = self._state_machine[self.state]
+            self._audio_to_play = self.get_curr_sprite().audio or self._audio_to_play
 
     def point_collision(self, vector: Pos) -> bool:
         return self.get_curr_sprite().collider.point_collision(vector - self.pos)
 
     def set_state(self, state: str, force_reset=False):
-        self.state = state
         if self.state != state or force_reset:
-            self._frame = 0
+            self._frame = -1  # need to do this to trigger frame 0
+        self.state = state
+        self.update(1)
 
     def get_sfc(self) -> PosSurface:
         return self.get_curr_sprite().sfc.move(self.pos)
+
+    def pop_audio(self) -> str | None:
+        audio = self._audio_to_play
+        self._audio_to_play = None
+        return audio
 
     def get_curr_sprite(self) -> SpriteFrame:
         return self._sprite_sheet[self.state][self._frame]
