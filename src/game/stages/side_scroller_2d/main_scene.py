@@ -16,7 +16,7 @@ from .game_objects import MainCharacter
 class MainScene(Scene):
     def __init__(self, name: str, mc: MainCharacter, game_objects: set[GameObject]):
         super().__init__(name)
-        self.camera = Camera(Pos(0, 0), GameSettings().screen_center().inv())
+        self.camera = Camera(mc.pos, GameSettings().screen_center().inv())
         self.game_objs = {g.name: g for g in game_objects}
         self.game_objs["mc"] = mc
         self.mc = mc
