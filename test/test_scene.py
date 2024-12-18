@@ -22,8 +22,7 @@ class TestScene(Scene):
                 "idle": [color_sfc((100, 100, 100))],
                 "selected_ini": [color_sfc((255, 100, 100))] * 5,
                 "selected": [color_sfc((100, 255, 100))],
-                "pressed": [color_sfc((255, 100, 100)), color_sfc((100, 255, 100))]
-                * 10,
+                "pressed": [color_sfc((0, 0, 0)), color_sfc((100, 255, 100))] * 10,
             },
             {("pressed", 0): "click.mp3", ("selected_ini", 0): "select.ogg"},
             anchor=Anchor.CENTER,
@@ -33,14 +32,14 @@ class TestScene(Scene):
             text="Here we have a sample text. This is a very cool text and serves the purpose of testing the textbox dimensions.",
         )
 
-    def update(self, frames_passed: int):
-        self.button.update(frames_passed)
+    def update(self):
+        self.button.update()
         self.button.handle_mouse_hover(Mouse().get_pos())
 
     def render(self, screen: Surface):
         screen.fill((255, 255, 255))
-        self.button.get_sfc().render(screen)
-        if audio := self.button.pop_audio():
+        self.button.render(screen)
+        if audio := self.button.sprite.pop_audio():
             Mixer().play_sfx(audio)
         screen.blit(self.textbox.get_sfc(), (0, 0))
 

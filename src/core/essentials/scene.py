@@ -14,7 +14,7 @@ class Scene:
     def transition_state(self) -> SceneTransitionState:
         return self._transition_state
 
-    def update(self, frames_passed: int):
+    def update(self):
         pass
 
     def on_event(self, event: Event):

@@ -2,7 +2,6 @@ import pygame
 from pygame.surface import Surface
 
 from src.core.essentials import Scene, SceneTransitionState
-from src.core.utils import FPSTracker
 
 from .singletons import GameSettings
 
@@ -17,14 +16,13 @@ class Control:
         self.clock = pygame.time.Clock()
         self.active_scene = initial_scene
         self.scene_dict = {initial_scene.name: initial_scene}
-        self.fps_tracker = FPSTracker(settings.fps)
 
     def main_loop(self):
         while True:
             self.clock.tick(GameSettings().fps)
             self.render()
             pygame.display.update()
-            self.active_scene.update(self.fps_tracker.get_frames_passed())
+            self.active_scene.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
