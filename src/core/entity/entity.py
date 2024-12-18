@@ -36,7 +36,8 @@ class RenderableEntity(Entity):
         super().update()
         self.sprite.update()
 
-    def render(self, screen: Surface, origin: Pos = Pos(0, 0)):
+    def render(self, screen: Surface, origin: Pos | None = None):
+        origin = origin or Pos(0, 0)
         frame = self.sprite.get_curr_sprite()
         global_pos = self.pos - origin
         rect = frame.sfc.get_rect(**{frame.anchor.name.lower(): global_pos.to_tuple()})
@@ -44,3 +45,11 @@ class RenderableEntity(Entity):
 
     def point_collision(self, vector: Pos) -> bool:
         return self.sprite.get_curr_sprite().collider.point_collision(vector - self.pos)
+
+    def collide(
+        self, entity: "RenderableEntity", offset: FPos = FPos(0, 0)
+    ) -> FPos | None:
+        col1 = self.sprite.get_curr_sprite().collider
+        col2 = entity.sprite.get_curr_sprite().collider
+        col2_pos = entity.fpos - self.fpos + offset
+        return col1.collide(col2, col2_pos)

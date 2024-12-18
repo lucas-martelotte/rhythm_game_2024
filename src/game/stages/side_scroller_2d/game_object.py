@@ -29,5 +29,6 @@ class GameObject(RenderableEntity):
     def on_event(self, event: Event):
         super().on_event(event)
 
-    def render(self, screen: Surface, origin: Pos = Pos(0, 0)):
+    def render(self, screen: Surface, origin: Pos | None = None):
+        origin = origin or Pos(0, 0)
         super().render(screen)

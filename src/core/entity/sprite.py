@@ -1,7 +1,7 @@
 from pygame.surface import Surface
 
-from src.core.collision import Collider
-from src.core.essentials import Anchor, FPSTracker
+from src.core.collision import Collider, RectCollider
+from src.core.essentials import Anchor, FPSTracker, Pos, Rect
 
 
 class SpriteFrame:
@@ -66,3 +66,17 @@ class Sprite(FPSTracker):
 
     def is_looping(self) -> bool:
         return self._state_machine[self.state] == self.state
+
+
+class BasicSprite(Sprite):
+    # fmt: off
+    def __init__(self, sfc: Surface, anchor: Anchor, collider_offset: Pos | None = None):
+        collider_offset = collider_offset or Pos(0,0)
+        rect = Rect.from_pygame(sfc.get_rect(**{anchor.name.lower(): (0,0)}))
+        collider = RectCollider(rect.move(collider_offset))
+        super().__init__(
+            {"idle": "idle"},
+            {"idle": [SpriteFrame(sfc, collider, anchor)]},
+            "idle", fps = 1
+        )
+    # fmt: on

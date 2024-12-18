@@ -1,6 +1,6 @@
-collision
+camera movement
 switch management
-event, event sheet
+event, event storing, event sheet
 scene creator
 
 main menu
@@ -8,6 +8,8 @@ settings menu (1440 x 1080, 1080 x 810, 800 x 600, 640 x 480)
 
 ======================
 
+basic plataforming
+collision
 time_tracker -> fps_tracker, velocity = pps, time_tracker for entities
 entity
 side scroller 2d scene

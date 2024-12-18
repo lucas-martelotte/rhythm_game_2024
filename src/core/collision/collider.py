@@ -1,7 +1,8 @@
 import numpy as np
 
-from src.core.essentials import Pos, Rect
+from src.core.essentials import FPos, Pos, Rect
 
+from .gjk import gjk_algorithm
 from .poly import ConvexPolygon
 
 
@@ -15,8 +16,9 @@ class Collider:  # Polygon collider
         self._bounding_rect = self._calculate_bounding_rect()
         self._convex_hull = ConvexPolygon(np.vstack([p.points for p in polys]))
 
-    def get_polygons(self) -> list[np.ndarray]:
-        return [p.points for p in self._polys]
+    @property
+    def polys(self) -> list[ConvexPolygon]:
+        return self._polys
 
     def _calculate_bounding_rect(self) -> Rect:
         left = min(np.min(poly.points[:, 0]) for poly in self._polys)
@@ -36,6 +38,20 @@ class Collider:  # Polygon collider
     def point_collision(self, vector: Pos) -> bool:
         arr = vector.to_array()
         return any(p.point_collision(arr) for p in self._polys)
+
+    def collide(self, collider: "Collider", pos: FPos) -> FPos | None:
+        """
+        Receives a collider and its position. For each polygon in both
+        colliders the algorithm translates the (other) polygon by that
+        position and runs the GJK algorithm to determine the collision
+        with self. If any of these polygons collide, returns their mdv
+        """
+        for poly1 in self.polys:
+            for poly2 in collider.polys:
+                mdv = gjk_algorithm(poly1.points, poly2.points + pos.to_array())
+                if mdv is not None:
+                    return FPos(mdv[0], mdv[1])
+        return None
 
 
 class RectCollider(Collider):

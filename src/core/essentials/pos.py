@@ -46,6 +46,9 @@ class Pos:
     def dist_squared(self, other: "Pos") -> int:
         return Pos.norm_square(other - self)
 
+    def __str__(self) -> str:
+        return str(self.to_tuple())
+
 
 class FPos:
     def __init__(self, x: float, y: float):
@@ -98,3 +101,6 @@ class FPos:
 
     def dist_squared(self, other: "FPos") -> float:
         return FPos.norm_square(other - self)
+
+    def __str__(self) -> str:
+        return str(self.to_tuple())
