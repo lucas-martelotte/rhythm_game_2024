@@ -10,7 +10,7 @@ class Control:
     def __init__(self, display: Surface, initial_scene: Scene) -> None:
         settings = GameSettings()
         self.display = display
-        self.screen = Surface(settings.screen_size())
+        self.screen = Surface(settings.screen_size)
         self.clock = pygame.time.Clock()
         self.active_scene = initial_scene
         self.scene_dict = {initial_scene.name: initial_scene}
@@ -32,8 +32,8 @@ class Control:
         settings = GameSettings()
         self.active_scene.render(self.screen)
         scaled = self.screen
-        scaled = pygame.transform.smoothscale(self.screen, settings.display_size())
-        scaled_rect = scaled.get_rect(center=settings.display_center().to_tuple())
+        scaled = pygame.transform.smoothscale(self.screen, settings.display_size)
+        scaled_rect = scaled.get_rect(center=settings.display_center.to_tuple())
         self.display.blit(scaled, scaled_rect)
         pygame.display.update()
 

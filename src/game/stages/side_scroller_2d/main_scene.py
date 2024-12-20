@@ -24,7 +24,7 @@ class MainScene(Scene):
     ):
         super().__init__(name)
         self.trigger_sheet = trigger_sheet
-        self.camera = Camera(main_character.pos, GameSettings().screen_center().inv())
+        self.camera = Camera(main_character.pos, GameSettings().screen_center.inv())
         self.game_objs = {g.name: g for g in game_objects}
         # For executing triggers
         self._action_queue: Queue[Action] = Queue()
@@ -52,22 +52,12 @@ class MainScene(Scene):
             if self._curr_action.done:
                 self._run_next_action()
         else:
-            self.dialogue_box.set_hidden(True)
             self.interact_btn.set_hidden(not bool(self.interact_btn.interacting_obj))
 
         self.camera.update()
         for game_obj in self.game_objs.values():
             game_obj.update()
         self._handle_collisions()
-
-    def _handle_collisions(self):
-        self.mc.handle_collisions(self.collidables)
-        # Handling interactions
-        self.interact_btn.set_interactable_obj(None)
-        for z_index in range(self._max_z_index, self._min_z_index - 1, -1):
-            for game_obj in self.get_interactable_game_objs_by_z_index(z_index):
-                if self.mc.collide(game_obj):
-                    self.interact_btn.set_interactable_obj(game_obj)
 
     def on_event(self, event: Event):
         super().on_event(event)
@@ -91,11 +81,22 @@ class MainScene(Scene):
             self.camera.render(screen, game_obj)
 
     def _run_next_action(self):
+        if self._curr_action:
+            self._curr_action.finish()
         self._curr_action = None
         if self._action_queue.empty():
             return  # No more actions to run
         self._curr_action = self._action_queue.get()
         self._curr_action.start(self.game_objs, self.camera)
+
+    def _handle_collisions(self):
+        self.mc.handle_collisions(self.collidables)
+        # Handling interactions
+        self.interact_btn.set_interactable_obj(None)
+        for z_index in range(self._max_z_index, self._min_z_index - 1, -1):
+            for game_obj in self.get_interactables_by_z_index(z_index):
+                if self.mc.collide(game_obj):
+                    self.interact_btn.set_interactable_obj(game_obj)
 
     def add_game_obj(self, game_obj: GameObject):
         self.game_objs[game_obj.name] = game_obj
@@ -111,8 +112,8 @@ class MainScene(Scene):
     def get_game_objs_by_z_index(self, z_index: int) -> set[GameObject]:
         return {o for o in self.game_objs.values() if o.z_index == z_index}
 
-    def get_interactable_game_objs_by_z_index(self, z_index: int) -> set[GameObject]:
+    def get_interactables_by_z_index(self, z_index: int) -> set[GameObject]:
         return {o for o in self.interactables if o.z_index == z_index}
 
-    def get_collidable_game_objs_by_z_index(self, z_index: int) -> set[GameObject]:
+    def get_collidables_by_z_index(self, z_index: int) -> set[GameObject]:
         return {o for o in self.collidables if o.z_index == z_index}

@@ -17,7 +17,7 @@ class TestScene(Scene):
             return sfc
 
         self.btn = BasicButton(
-            settings.screen_center(),
+            settings.screen_center,
             {
                 "idle": [color_sfc((100, 100, 100))],
                 "selected_ini": [color_sfc((255, 100, 100))] * 5,

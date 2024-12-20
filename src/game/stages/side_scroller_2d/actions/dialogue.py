@@ -20,6 +20,10 @@ class DialogueAction(Action):
         self.dialogue_box.set_text(self.text, blip_sound=self.blip_sound)
         self.dialogue_box.set_hidden(False)
 
+    def finish(self):
+        super().finish()
+        self.dialogue_box.set_hidden(True)
+
     def on_event(self, event):
         super().on_event(event)
         if event.type == pygame.KEYDOWN:
@@ -31,6 +35,6 @@ class DialogueAction(Action):
 
     def _press_dialogue_box(self):
         if self.dialogue_box.all_text_is_displayed():
-            self.finish()
+            self._running = False
             return
         self.dialogue_box.display_all_text()

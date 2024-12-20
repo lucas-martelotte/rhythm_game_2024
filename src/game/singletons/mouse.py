@@ -11,8 +11,8 @@ from .game_settings import GameSettings
 class Mouse(metaclass=SingletonMetaclass):
     def get_pos(self) -> Pos:
         settings = GameSettings()
-        dw, dh = settings.display_size()
-        sw, sh = settings.screen_size()
+        dw, dh = settings.display_size
+        sw, sh = settings.screen_size
         x, y = get_pos()
         return Pos.from_tuple(((x * sw) // dw, (y * sh) // dh))
 
