@@ -16,5 +16,5 @@ class Mouse(metaclass=SingletonMetaclass):
         x, y = get_pos()
         return Pos.from_tuple(((x * sw) // dw, (y * sh) // dh))
 
-    def is_pressed(self, button: MouseButtons) -> bool:
-        return get_pressed(num_buttons=5)[button - 1]
+    def is_pressed(self, btn: MouseButtons) -> bool:
+        return get_pressed(num_buttons=5)[btn - 1]

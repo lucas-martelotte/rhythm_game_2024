@@ -1,51 +1,77 @@
-from math import pi
+from queue import Queue
 
-from numpy import zeros
+import pygame
 from pygame.event import Event
 from pygame.surface import Surface
 
-from src.core.collision import polar_angle
 from src.core.entity import Camera
-from src.core.essentials import FPos, Pos, Scene
+from src.core.essentials import FPos, Pos, Rect, Scene
 from src.game.singletons import GameSettings
 
+from .action import Action
 from .game_object import GameObject
-from .game_objects import MainCharacter
+from .game_objects import InteractButton, MainCharacter
+from .trigger import TriggerSheet
 
 
 class MainScene(Scene):
-    def __init__(self, name: str, mc: MainCharacter, game_objects: set[GameObject]):
+    def __init__(
+        self,
+        name: str,
+        main_character: MainCharacter,
+        game_objects: set[GameObject],
+        trigger_sheet: TriggerSheet,
+    ):
         super().__init__(name)
-        self.camera = Camera(mc.pos, GameSettings().screen_center().inv())
+        self.trigger_sheet = trigger_sheet
+        self.camera = Camera(main_character.pos, GameSettings().screen_center().inv())
         self.game_objs = {g.name: g for g in game_objects}
-        self.game_objs["mc"] = mc
-        self.mc = mc
+        # For executing triggers
+        self._action_queue: Queue[Action] = Queue()
+        self._curr_action: Action | None = None
+
+        self._max_z_index = max(o.z_index for o in game_objects)
+        self._min_z_index = min(o.z_index for o in game_objects)
+
+        self.mc = main_character
+        self.add_game_obj(main_character)
+        self.camera.target_obj = self.mc
+
+        self.interact_btn = InteractButton()
+        self.add_game_obj(self.interact_btn)
 
     def update(self):
         super().update()
-        self.camera.target_pos = self.mc.fpos
+        if self._curr_action and self._curr_action.done():
+            self._run_next_action()
         self.camera.update()
         for game_obj in self.game_objs.values():
             game_obj.update()
         self._handle_collisions()
 
     def _handle_collisions(self):
-        # Standard mc collisions
-        collidables, mc = self.collidable_game_objs, self.mc
-        for game_obj in collidables:
-            if mdv := mc.collide(game_obj):
-                mc.fpos -= mdv * 1.0001
-                v_angle = polar_angle(zeros(2), mdv.to_array())
-                if -pi / 4 > v_angle > -3 * pi / 4:
-                    mc.falling = False
-        # Check if mc still on ground
-        if not any(mc.collide(o, offset=FPos(0, -10)) for o in collidables):
-            mc.falling = True
+        self.mc.handle_collisions(self.collidables)
+        # Handling interactions
+        self.interact_btn.set_interactable_obj(None)
+        for z_index in range(self._max_z_index, self._min_z_index - 1, -1):
+            for game_obj in self.get_interactable_game_objs_by_z_index(z_index):
+                if self.mc.collide(game_obj):
+                    self.interact_btn.set_interactable_obj(game_obj)
 
     def on_event(self, event: Event):
         super().on_event(event)
+        if self._curr_action:
+            self._curr_action.on_event(event)
+            return
         for game_obj in self.game_objs.values():
             game_obj.on_event(event)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_z:
+                if int_obj := self.interact_btn._interacting_obj:
+                    if trigger := self.trigger_sheet.get_obj_trigger(int_obj):
+                        for action in trigger.actions:
+                            self._action_queue.put(action)
+                        self._run_next_action()
 
     def render(self, screen: Surface):
         super().render(screen)
@@ -53,10 +79,29 @@ class MainScene(Scene):
         for game_obj in self.game_objs.values():
             self.camera.render(screen, game_obj)
 
+    def _run_next_action(self):
+        self._curr_action = None
+        if self._action_queue.empty():
+            return  # No more actions to run
+        self._curr_action = self._action_queue.get()
+        self._curr_action.start(self.game_objs, self.camera)
+
+    def add_game_obj(self, game_obj: GameObject):
+        self.game_objs[game_obj.name] = game_obj
+
     @property
-    def collidable_game_objs(self) -> set[GameObject]:
+    def collidables(self) -> set[GameObject]:
         return {o for o in self.game_objs.values() if o.collidable}
 
     @property
-    def interactable_game_objs(self) -> set[GameObject]:
+    def interactables(self) -> set[GameObject]:
         return {o for o in self.game_objs.values() if o.interactable}
+
+    def get_game_objs_by_z_index(self, z_index: int) -> set[GameObject]:
+        return {o for o in self.game_objs.values() if o.z_index == z_index}
+
+    def get_interactable_game_objs_by_z_index(self, z_index: int) -> set[GameObject]:
+        return {o for o in self.interactables if o.z_index == z_index}
+
+    def get_collidable_game_objs_by_z_index(self, z_index: int) -> set[GameObject]:
+        return {o for o in self.collidables if o.z_index == z_index}

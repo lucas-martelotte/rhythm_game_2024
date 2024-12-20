@@ -4,8 +4,6 @@ from pygame.surface import Surface
 from src.core.entity import RenderableEntity, Sprite
 from src.core.essentials import Pos
 
-from .trigger import TriggerSheet
-
 
 class GameObject(RenderableEntity):
     def __init__(
@@ -13,15 +11,16 @@ class GameObject(RenderableEntity):
         name: str,
         position: Pos,
         sprite: Sprite,
-        trigger_sheet: TriggerSheet,
         collidable: bool = False,
         interactable: bool = False,
+        z_index: int = 1,
     ):
         super().__init__(sprite, position)
         self.name = name
-        self.trigger_sheet = trigger_sheet
         self.collidable = collidable
         self.interactable = interactable
+        self.z_index = z_index
+        self.local_switch = "A"
 
     def update(self):
         super().update()

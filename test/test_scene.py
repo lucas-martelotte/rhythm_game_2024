@@ -16,7 +16,7 @@ class TestScene(Scene):
             sfc.fill(color)
             return sfc
 
-        self.button = BasicButton(
+        self.btn = BasicButton(
             settings.screen_center(),
             {
                 "idle": [color_sfc((100, 100, 100))],
@@ -33,17 +33,17 @@ class TestScene(Scene):
         )
 
     def update(self):
-        self.button.update()
-        self.button.handle_mouse_hover(Mouse().get_pos())
+        self.btn.update()
+        self.btn.handle_mouse_hover(Mouse().get_pos())
 
     def render(self, screen: Surface):
         screen.fill((255, 255, 255))
-        self.button.render(screen)
-        if audio := self.button.sprite.pop_audio():
+        self.btn.render(screen)
+        if audio := self.btn.sprite.pop_audio():
             Mixer().play_sfx(audio)
         screen.blit(self.textbox.get_sfc(), (0, 0))
 
     def on_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == MouseButtons.LEFT:
-                self.button.handle_mouse_press(Mouse().get_pos())
+                self.btn.handle_mouse_press(Mouse().get_pos())

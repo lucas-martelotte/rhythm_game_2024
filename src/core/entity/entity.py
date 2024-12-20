@@ -1,7 +1,7 @@
 from pygame.event import Event
 from pygame.surface import Surface
 
-from src.core.essentials import FPos, Pos, TimeTracker
+from src.core.essentials import FPos, Pos, Rect, TimeTracker
 from src.core.utils import sgn_round
 
 from .sprite import Sprite
@@ -38,18 +38,25 @@ class RenderableEntity(Entity):
 
     def render(self, screen: Surface, origin: Pos | None = None):
         origin = origin or Pos(0, 0)
-        frame = self.sprite.get_curr_sprite()
-        global_pos = self.pos - origin
-        rect = frame.sfc.get_rect(**{frame.anchor.name.lower(): global_pos.to_tuple()})
-        screen.blit(frame.sfc, rect)
+        sfc, anchor = self.sprite.sfc, self.sprite.anchor
+        rel_pos = self.pos - origin
+        rect = sfc.get_rect(**{anchor.name.lower(): rel_pos.to_tuple()})
+        screen.blit(sfc, rect)
 
     def point_collision(self, vector: Pos) -> bool:
-        return self.sprite.get_curr_sprite().collider.point_collision(vector - self.pos)
+        return self.sprite.collider.point_collision(vector - self.pos)
 
     def collide(
         self, entity: "RenderableEntity", offset: FPos = FPos(0, 0)
     ) -> FPos | None:
-        col1 = self.sprite.get_curr_sprite().collider
-        col2 = entity.sprite.get_curr_sprite().collider
+        col1 = self.sprite.collider
+        col2 = entity.sprite.collider
         col2_pos = entity.fpos - self.fpos + offset
         return col1.collide(col2, col2_pos)
+
+    def get_curr_rect(self, origin: Pos | None = None) -> Rect:
+        origin = origin or Pos(0, 0)
+        anchor = self.sprite.anchor
+        rel_pos = self.pos - origin
+        rect = self.sprite.sfc.get_rect(**{anchor.name.lower(): rel_pos.to_tuple()})
+        return Rect.from_pygame(rect)
