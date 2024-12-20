@@ -22,6 +22,7 @@ class InteractButton(GameObject):
             InteractButtonSprite(),
             z_index=10
         )
+        self.set_hidden(True)
     # fmt: on
 
     def set_interactable_obj(self, int_obj: GameObject | None):
@@ -29,9 +30,6 @@ class InteractButton(GameObject):
         if int_obj:
             obj_rect = int_obj.get_curr_rect()
             self.fpos = FPos(obj_rect.x_middle, obj_rect.y - 20)
-            self.sprite.hidden = False
-        else:
-            self.sprite.hidden = True
 
     @property
     def interacting_obj(self) -> GameObject | None:

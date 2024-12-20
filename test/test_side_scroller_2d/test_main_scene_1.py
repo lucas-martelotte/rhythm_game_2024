@@ -7,8 +7,10 @@ from src.game.stages.side_scroller_2d import (
     GameObject,
     MainCharacter,
     MainScene,
+    Trigger,
     TriggerSheet,
 )
+from src.game.stages.side_scroller_2d.actions import DialogueAction
 
 # fmt: off
 # ============================= #
@@ -79,10 +81,16 @@ interactable1 = GameObject(
 
 class TestMainScene1(MainScene):
     def __init__(self):
-
+        # fmt: off
         super().__init__(
             "test_main_scene_1",
             MainCharacter(Pos(0, 1000)),
             {ground1, ground2, ground3, interactable1},
-            TriggerSheet([], {}),
+            TriggerSheet(
+                [], 
+                {
+                    ("interactable1", "A") : {Trigger(set(), [DialogueAction("Objeto doidao", "mc", "blip_male.opus")])}
+                }
+            ),
         )
+        # fmt: on

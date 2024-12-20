@@ -14,7 +14,7 @@ class TriggerSheet:
     def __init__(
         self,
         instant_triggers: list[Trigger],
-        obj_trigger_dict: dict[tuple[str, str], list[Trigger]],
+        obj_trigger_dict: dict[tuple[str, str], set[Trigger]],
     ):
         self.instant_triggers = instant_triggers
         self.obj_trigger_dict = obj_trigger_dict

@@ -27,3 +27,9 @@ class GameObject(RenderableEntity):
 
     def on_event(self, event: Event):
         super().on_event(event)
+
+    def set_hidden(self, hidden: bool):
+        self.sprite.hidden = hidden
+
+    def get_hidden(self) -> bool:
+        return self.sprite.hidden

@@ -43,12 +43,17 @@ class MainScene(Scene):
         self.dialogue_box = DialogueBox((400, 200))
         self.add_game_obj(self.dialogue_box)
         self.dialogue_box.set_target_obj(self.mc)
-        self.dialogue_box.set_text("Olha que texto bonitinho.", "blip_male.opus")
 
     def update(self):
         super().update()
-        if self._curr_action and self._curr_action.done():
-            self._run_next_action()
+
+        if self._curr_action:  # If there is an action running
+            self.interact_btn.set_hidden(True)
+            if self._curr_action.done:
+                self._run_next_action()
+        else:
+            self.interact_btn.set_hidden(not bool(self.interact_btn.interacting_obj))
+
         self.camera.update()
         for game_obj in self.game_objs.values():
             game_obj.update()
