@@ -89,7 +89,12 @@ class TestMainScene1(MainScene):
             TriggerSheet(
                 [], 
                 {
-                    ("interactable1", "A") : {Trigger(set(), [DialogueAction("Objeto doidao", "mc", "blip_male.opus")])}
+                    ("interactable1", "A") : {
+                        Trigger(set(), [
+                            DialogueAction("Objeto doidao", "mc", "blip_male.opus"),
+                            DialogueAction("Doidao mrm", "mc", "blip_male.opus"),
+                        ])
+                    }
                 }
             ),
         )

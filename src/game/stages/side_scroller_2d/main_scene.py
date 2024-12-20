@@ -52,6 +52,7 @@ class MainScene(Scene):
             if self._curr_action.done:
                 self._run_next_action()
         else:
+            self.dialogue_box.set_hidden(True)
             self.interact_btn.set_hidden(not bool(self.interact_btn.interacting_obj))
 
         self.camera.update()
@@ -70,7 +71,7 @@ class MainScene(Scene):
 
     def on_event(self, event: Event):
         super().on_event(event)
-        if self._curr_action:
+        if self._curr_action and not self._curr_action.done:
             self._curr_action.on_event(event)
             return
         for game_obj in self.game_objs.values():

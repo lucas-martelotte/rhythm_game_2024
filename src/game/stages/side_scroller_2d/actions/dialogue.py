@@ -31,7 +31,6 @@ class DialogueAction(Action):
 
     def _press_dialogue_box(self):
         if self.dialogue_box.all_text_is_displayed():
-            self._done = True
-            self.dialogue_box.set_hidden(True)
+            self.finish()
             return
         self.dialogue_box.display_all_text()
