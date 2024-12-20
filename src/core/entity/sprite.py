@@ -26,17 +26,17 @@ class Sprite(FPSTracker):
         initial_state: str,
         fps: int = 24,
     ):
+        super().__init__(fps)
         self._state_machine = state_machine
         self._sprite_sheet = sprite_sheet
         self._frame = 0
         self.state = initial_state
         self._audio_to_play: str | None = None  # handle frame loss]
-        self.fps_tracker = FPSTracker(fps)
         self.hidden = False
         self.alpha = 255
 
     def update(self):
-        frames_passed = self.fps_tracker.get_frames_passed()
+        frames_passed = self.get_frames_passed()
         for _ in range(frames_passed):
             self._audio_to_play = self._get_curr_sprite().audio or self._audio_to_play
             self._frame += 1

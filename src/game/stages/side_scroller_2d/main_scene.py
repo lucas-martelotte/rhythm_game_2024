@@ -10,7 +10,7 @@ from src.game.singletons import GameSettings
 
 from .action import Action
 from .game_object import GameObject
-from .game_objects import InteractButton, MainCharacter
+from .game_objects import DialogueBox, InteractButton, MainCharacter
 from .trigger import TriggerSheet
 
 
@@ -39,6 +39,11 @@ class MainScene(Scene):
 
         self.interact_btn = InteractButton()
         self.add_game_obj(self.interact_btn)
+
+        self.dialogue_box = DialogueBox((400, 200))
+        self.add_game_obj(self.dialogue_box)
+        self.dialogue_box.set_target_obj(self.mc)
+        self.dialogue_box.set_text("Olha que texto bonitinho.", "blip_male.opus")
 
     def update(self):
         super().update()

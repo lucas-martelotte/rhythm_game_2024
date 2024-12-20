@@ -13,14 +13,13 @@ class Mixer(metaclass=SingletonMetaclass):
     BLIP_CHANNEL = 2
 
     def play_sfx(self, sound_name: str, volume: float = 0.01):
-        self.play_general(sound_name, self.SFX_CHANNEL, volume=volume)
+        channel = Channel(self.SFX_CHANNEL)
+        sound_dir = self.BLIP_BASE_PATH + sound_name
+        self._play_from_directory(sound_dir, channel, volume=volume)
 
     def play_blip(self, sound_name: str, volume: float = 0.01):
-        self.play_general(sound_name, self.BLIP_CHANNEL, volume=volume)
-
-    def play_general(self, sound_name: str, channel_id: int, volume: float = 0.01):
-        channel = Channel(channel_id)
-        sound_dir = self.SFX_BASE_PATH + sound_name
+        channel = Channel(self.BLIP_CHANNEL)
+        sound_dir = self.BLIP_BASE_PATH + sound_name
         self._play_from_directory(sound_dir, channel, volume=volume)
 
     def play_music(self, music_name: str, volume: float = 0.01):

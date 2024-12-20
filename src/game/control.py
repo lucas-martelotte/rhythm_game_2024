@@ -7,11 +7,9 @@ from .singletons import GameSettings
 
 
 class Control:
-    def __init__(self, initial_scene: Scene) -> None:
+    def __init__(self, display: Surface, initial_scene: Scene) -> None:
         settings = GameSettings()
-        self.display = pygame.display.set_mode(
-            settings.display_size(), pygame.FULLSCREEN if settings.fullscreen else 0
-        )
+        self.display = display
         self.screen = Surface(settings.screen_size())
         self.clock = pygame.time.Clock()
         self.active_scene = initial_scene
